@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,6 +17,7 @@ public class Port {
     public final static Integer MAX_PORT_STORAGE_CAPACITY = 50;
     private Lock lock = new ReentrantLock();
     private Deque<Dock> docks = new ArrayDeque<>(maxNumberOfDocks);
+    private Deque<Condition> waitingThreadsConditions = new ArrayDeque<>();
 
     private static class LoadSingletonPort{
         static final Port INSTANCE = new Port();
@@ -36,28 +37,34 @@ public class Port {
     public Dock acquireDock(){
         lock.lock();
         try {
-            while (true){
-                if(numberOfFreeDocks ==0){
-                    try {
-                        TimeUnit.SECONDS.sleep(2);
-                    } catch (InterruptedException e) {
-                        logger.error(e.getMessage());
-                    }
-                }else {
-                    break;
-                }
+            if(numberOfFreeDocks ==0){
+                Condition condition = lock.newCondition();
+                waitingThreadsConditions.add(condition);
+                condition.await();
             }
             numberOfFreeDocks--;
-            return docks.pop();
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+        return docks.pop();
+    }
+    public void getBackDock(Dock dock){
+        lock.lock();
+        try {
+            docks.add(dock);
+            numberOfFreeDocks++;
+            if(!waitingThreadsConditions.isEmpty()){
+                Condition condition = waitingThreadsConditions.poll();
+                if(condition!=null){
+                    condition.signal();
+                }
+            }
         }finally {
             lock.unlock();
         }
     }
-    public void getBackDock(Dock dock){
-        docks.add(dock);
-        numberOfFreeDocks++;
-    }
-
     public Integer getNumberOfFreeDocks() {
         return numberOfFreeDocks;
     }

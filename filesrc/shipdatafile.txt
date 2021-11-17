@@ -7,3 +7,5 @@ Mariamo-Brante=0=true
 Costa Concorda=6=true
 Titanic=10=false
 Petr Velikii=7=true
+Vaska De Gama=1=true
+Shepard=9=false
