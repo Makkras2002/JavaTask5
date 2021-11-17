@@ -1,0 +1,9 @@
+Victoria=2=false
+Yellow King=5=false
+Santa-Luisa-Maria=8=false
+Colonel Sanders=9=false
+Victorio Scaletto=1=true
+Mariamo-Brante=0=true
+Costa Concorda=6=true
+Titanic=10=false
+Petr Velikii=7=true
