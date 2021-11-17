@@ -12,11 +12,11 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Port {
     private static Logger logger = LogManager.getLogger();
     public static Integer numberOfFreeDocks = 5;
-    public final static Integer maxNumberOfDocks = 5;
+    public final static Integer MAX_NUMBER_OF_DOCKS = 5;
     public static Integer containersAmountInPortStorage = 30;
     public final static Integer MAX_PORT_STORAGE_CAPACITY = 50;
     private Lock lock = new ReentrantLock();
-    private Deque<Dock> docks = new ArrayDeque<>(maxNumberOfDocks);
+    private Deque<Dock> docks = new ArrayDeque<>(MAX_NUMBER_OF_DOCKS);
     private Deque<Condition> waitingThreadsConditions = new ArrayDeque<>();
 
     private static class LoadSingletonPort{
@@ -25,7 +25,7 @@ public class Port {
 
     private Port(){
         int dockId =1;
-        while (dockId<=maxNumberOfDocks){
+        while (dockId<= MAX_NUMBER_OF_DOCKS){
             docks.add(new Dock(dockId));
             dockId++;
         }
