@@ -36,7 +36,7 @@ public class Ship extends Thread{
     public void run() {
         Dock dock = Port.getInstance().acquireDock();
         dock.doShipService(this);
-        Port.getInstance().getBackDock(new Dock(dock.getDockId()));
+        Port.getInstance().getBackDock(dock);
     }
 
     public Integer getShipContainerMaxCapacity() {
