@@ -9,7 +9,7 @@ import java.util.List;
 public class ShipDataParser implements CustomDataParser {
     private final static String SHIP_PARAMETERS_DELIMITER = "=";
     @Override
-    public List<Ship> parseShipsFileData(List<String> unParsedData){
+    public List<Ship> parseShipsFileData(List<String> unParsedData) {
         List<Ship> ships = new ArrayList<>();
         String[] subLine =null;
         for (String line : unParsedData){

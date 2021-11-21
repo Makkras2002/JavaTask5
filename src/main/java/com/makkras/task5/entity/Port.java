@@ -5,16 +5,16 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Port {
     private static Logger logger = LogManager.getLogger();
-    public static Integer numberOfFreeDocks = 5;
-    public final static Integer MAX_NUMBER_OF_DOCKS = 5;
-    public static Integer containersAmountInPortStorage = 30;
-    public final static Integer MAX_PORT_STORAGE_CAPACITY = 50;
+    public static final Integer MAX_NUMBER_OF_DOCKS = 7;
+    public AtomicInteger containersAmountInPortStorage = new AtomicInteger(30);
+    public static final Integer MAX_PORT_STORAGE_CAPACITY = 50;
     private Lock lock = new ReentrantLock();
     private Deque<Dock> docks = new ArrayDeque<>(MAX_NUMBER_OF_DOCKS);
     private Deque<Condition> waitingThreadsConditions = new ArrayDeque<>();
@@ -35,26 +35,26 @@ public class Port {
     }
 
     public Dock acquireDock(){
-        lock.lock();
+        Dock dock = new Dock(123);
         try {
-            if(numberOfFreeDocks ==0){
+            lock.lock();
+            if(docks.size() ==0){
                 Condition condition = lock.newCondition();
                 waitingThreadsConditions.add(condition);
                 condition.await();
             }
-            numberOfFreeDocks--;
+            dock = docks.pop();
         } catch (InterruptedException e) {
             logger.error(e.getMessage());
         } finally {
             lock.unlock();
         }
-        return docks.pop();
+        return dock;
     }
     public void getBackDock(Dock dock){
-        lock.lock();
         try {
+            lock.lock();
             docks.add(dock);
-            numberOfFreeDocks++;
             if(!waitingThreadsConditions.isEmpty()){
                 Condition condition = waitingThreadsConditions.poll();
                 if(condition!=null){
@@ -66,6 +66,6 @@ public class Port {
         }
     }
     public Integer getNumberOfFreeDocks() {
-        return numberOfFreeDocks;
+        return docks.size();
     }
 }

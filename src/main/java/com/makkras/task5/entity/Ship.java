@@ -5,10 +5,9 @@ import com.makkras.task5.entity.state.impl.NewThreadShipState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.TimeUnit;
 
 
-public class Ship extends Thread{
+public class Ship extends Thread {
     private static Logger logger = LogManager.getLogger();
     private String shipName;
     private Integer containerAmount;

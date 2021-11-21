@@ -27,16 +27,16 @@ public class Main {
             ships.forEach(executorService::execute);
             boolean isFinished = true;
             boolean endingIndicator = true;
-            while (endingIndicator){
+            while (endingIndicator) {
                 isFinished = true;
-                for(Ship ship: ships){
+                for(Ship ship: ships) {
                     if(!ship.getShipState().equals("class com.makkras.task5.entity.state.impl.FinishedThreadShipState")){
                         isFinished =false;
                     }
                 }
-                if(isFinished){
+                if(isFinished) {
                     executorService.shutdownNow();
-                    logger.info(Port.containersAmountInPortStorage);
+                    logger.info(Port.getInstance().containersAmountInPortStorage);
                     endingIndicator =false;
                 }
             }
